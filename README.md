@@ -41,7 +41,7 @@ sudo curl -o /tmp/install.sh https://raw.githubusercontent.com/MicroPyramid/dock
 
 Currently supports:
    - Ubuntu 16.04, 14.04
-   - Debian Jessie, Wheezy
+   - Debian Buster, Jessie, Wheezy
    - CentOS 7, 6
 
 

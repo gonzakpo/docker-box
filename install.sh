@@ -57,6 +57,9 @@ dist_info(){
         debian|raspbian)
             dist_version="$(cat /etc/debian_version | sed 's/\/.*//' | sed 's/\..*//')" &&
             case "$dist_version" in
+                10)
+                    dist_version="buster"
+                ;;
                 8)
                     dist_version="jessie"
                 ;;
@@ -233,8 +236,19 @@ install(){
     
             python manage.py migrate &&
             python manage.py createsuperuser &&
-    
-            if [ "$dist_version" = "jessie" ]
+
+            if [ "$dist_version" = "buster" ]
+            then
+                da_systemd_jessie(){
+                    restrict_api_access &&
+                    echo "$docker_tcp" > /tmp/docker_tcp.socket &&
+                    sudo mv /tmp/docker_tcp.socket /etc/systemd/system/docker_tcp.socket &&
+                    sudo systemctl stop docker && sudo systemctl start docker_tcp.socket &&
+                    sudo systemctl start docker
+                } &&
+                curl -Is -X GET http://localhost:"$docker_api_port"/images/json | grep -i 'HTTP/1.1 200 OK' ||
+                da_systemd_jessie
+            elif [ "$dist_version" = "jessie" ]
             then
                 da_systemd_jessie(){
                     restrict_api_access &&
